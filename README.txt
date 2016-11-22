@@ -1,1 +1,3 @@
-This is the stub README.txt for the "bullrender" project.
+#Bullrender
+
+Stupid basic graphic rendering in lisp. Not yet though
