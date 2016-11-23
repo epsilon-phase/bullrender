@@ -1,5 +1,6 @@
 ;;;; package.lisp
 
 (defpackage #:bullrender
-  (:use #:cl))
+  (:use #:cl)
+  (:export :aslice-multi))
 
