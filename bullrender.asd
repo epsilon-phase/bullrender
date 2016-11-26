@@ -8,3 +8,10 @@
   :components ((:file "package")
                (:file "bullrender")))
 
+(asdf:defsystem #:bullrender-test
+  :pathname "tests/"
+  :serial t
+  :components ((:file "package")
+               (:file "tests"))
+  :depends-on (#:bullrender #:fiveam))
+
