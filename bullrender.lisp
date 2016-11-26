@@ -37,13 +37,13 @@
   (let* ((size (map 'list #'1- (map 'list #'- end start)))
          (offset (make-list (length start) :initial-element 0))
          (result (make-array (map 'list #'1+ size)  :element-type (array-element-type array))))
-    (print result)
      (loop until (equal offset size)
            do(progn
                (setf (apply #'aref (concatenate 'list  (list result) offset))
                      (apply #'aref (concatenate 'list (list array)(map 'list #'+ start offset))))
                (setf offset (interpolate-lists offset size))
-               ))
+               )
+           finally(setf (apply #'aref result offset) (apply #'aref array (map 'list #'+ start offset))))
     result))
 ;(defun aslice(array start end)
                                         ;())
@@ -70,8 +70,9 @@
                (list 0.0 0.0 1.0))))
 (defun make-rotation-matrix(theta)
   (declare (type single-float theta) )
-  (make-array '(3 3) :element-type 'single-float :initial-contents (list (list (cos theta) (- 0(sin theta)) 0.0) (list (sin theta) (cos theta) 0.0)
-                                                                         (list 0.0 0.0 1.0))))
+  (make-array '(3 3) :element-type 'single-float :initial-contents
+              (list (list (cos theta) (- 0(sin theta)) 0.0) (list (sin theta) (cos theta) 0.0)
+                    (list 0.0 0.0 1.0))))
 (defun make-scale-matrix(sx sy)
   (declare (type single-float sx sy))
   (make-array '(3 3) :element-type 'single-float :initial-contents (list (list sx 0.0 0.0) (list 0.0 sy 0.0) '(0.0 0.0 1.0))))
@@ -88,3 +89,6 @@
   (let ((coords (make-array '(1 3) :initial-contents (list (list (vertex-x element) (vertex-y element) 1.0)))))
     (mat-mult coords m )))
 
+;(defvar *a* (make-array '(5 5) :element-type 'single-float :initial-contents '
+;                        ((1.0 1.0 1.0 1.0 1.0) (2.0 2.0 2.0 2.0 2.0) (3.0 3.0 3.0 3.0 3.0)
+;                         (4.0 4.0 4.0 4.0 4.0) (5.0 5.0 5.0 5.0 5.0)))) 3 
