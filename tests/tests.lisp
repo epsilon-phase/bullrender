@@ -9,29 +9,36 @@
     result))
 (def-suite bullrender-tests :description "")
 (in-suite bullrender-tests)
-(defun array-clone()
-  (loop for i from 1 to 3
+(test array-clone
+  (is (array-clone-func) "Arrays were not equal"))
+(defun make-index(array &key (start nil))
+  (let ((dimensions (array-dimensions array)))
+    (if start
+        (map 'list #'+ start (loop for j in dimensions for i in start collect(max 0 (random (1- (- j i))))))
+        (loop for i in dimensions collect(random (1- i))))))
+(defun array-clone-func()
+  (loop named outer for i from 1 to 3
     do(let* ((original-array (generate-multi-dim-array i))
-           (sizes
-             (array-dimensions original-array))
-           (start-point
-             (loop for j from 0 to i
-                   collect(random (1- (elt sizes j))))
-             )
-           (end-point (loop for j from 0 to i
-                            collect(+ (elt start-point j)
-                                      (random (1-
-                                            (- (elt sizes j)
-                                               (elt start-point j))))))
-                      )
+             (start-point (make-index original-array))
+             (end-point (make-index original-array :start start-point)
+                        )
+             (sizes (map 'list #'- end-point start-point))
            (subset
              (bullrender:aslice-multi
               original-array start-point end-point)))
-        (loop for index = (make-list i :initial-element 0) then (bullrender:interpolate-lists index (array-dimensions subset))
-              do(print index)
-                until (equal index (map 'list #'- end-point start-point))
-            do(if (equal
-               (apply #'aref original-array (map 'list #'+ start-point index))
-               (apply #'aref subset index))
-                  (print "WORKED")))
-      )))
+        (print original-array)
+        (loop with index = (make-list i :initial-element 0)
+                until (equal sizes index)
+              do(progn
+                  (if (not (equal
+                            (apply #'aref original-array (map 'list #'+ start-point index))
+                            (apply #'aref subset index)))
+                      (progn
+                        (print original-array)
+                        (print subset)
+                        (return-from outer nil)))
+                  (setf index (bullrender:interpolate-lists index sizes)))
+                )
+        t)
+        finally (return-from outer t)))
+

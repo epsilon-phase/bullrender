@@ -33,8 +33,13 @@
 (defun make-array-accessor(array)
   (lambda (&rest a)
     (apply #'aref (concatenate 'list (list array) a))))
+(defun list-lte(a b)
+  (loop for i from 0 to (1- (length a))
+        do(if (not (<= (elt a i) (elt b i)))
+              (return nil))
+        finally (return t)))
 (defun aslice-multi(array start end)
-  (let* ((size (map 'list #'1- (map 'list #'- end start)))
+  (let* ((size (map 'list #'- end start))
          (offset (make-list (length start) :initial-element 0))
          (result (make-array (map 'list #'1+ size)  :element-type (array-element-type array))))
      (loop until (equal offset size)
@@ -88,6 +93,7 @@
 (defmethod transform((element vertex) m)
   (let ((coords (make-array '(1 3) :initial-contents (list (list (vertex-x element) (vertex-y element) 1.0)))))
     (mat-mult coords m )))
+
 
 ;(defvar *a* (make-array '(5 5) :element-type 'single-float :initial-contents '
 ;                        ((1.0 1.0 1.0 1.0 1.0) (2.0 2.0 2.0 2.0 2.0) (3.0 3.0 3.0 3.0 3.0)

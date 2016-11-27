@@ -2,5 +2,5 @@
 
 (defpackage #:bullrender
   (:use #:cl)
-  (:export :aslice-multi :interpolate-lists))
+  (:export :aslice-multi :interpolate-lists :list-lte))
 
